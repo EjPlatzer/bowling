@@ -13,25 +13,11 @@ fn main() -> Result<(), String> {
     while !game.is_complete() {
         println!("How many pins did you bowl?");
 
-        let mut line = String::new();
-        io::stdin()
-            .read_line(&mut line)
-            .or_else(|e| Err(format!("Error reading input: {}", e.kind())))?;
+        let result = read_pins().and_then(|pins| game.bowl(pins));
 
-        let bowled = match line.trim_end().parse::<u8>() {
-            Ok(n) => n,
-            Err(_e) => {
-                println!("Invalid number of pins {}", line);
-                continue;
-            }
-        };
-
-        let _frame = match game.bowl(bowled) {
-            Ok(frame) => frame,
-            Err(e) => {
-                println!("Error recording pins bowled: {}", e);
-                continue;
-            }
+        if let Err(e) = result {
+            println!("Error reading pins bowled: {}", e);
+            continue;
         };
 
         println!("Your score is now {}", game.score())
@@ -41,4 +27,13 @@ fn main() -> Result<(), String> {
 
     println!("You scored {}!", score);
     Ok(())
+}
+
+fn read_pins() -> Result<u8, String> {
+    let mut line = String::new();
+    io::stdin()
+        .read_line(&mut line)
+        .map_err(|e| format!("Error reading input: {}", e.kind()))?;
+
+    line.trim_end().parse::<u8>().map_err(|e| format!("{}", e))
 }
