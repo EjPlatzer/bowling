@@ -53,6 +53,18 @@ impl Game {
             .map(|frames| frames[0].score(&frames[1..=2]) as u16)
             .sum()
     }
+
+    pub fn is_complete(&self) -> bool {
+        if !self.frames[11].is_playable() {
+            return true;
+        }
+
+        match self.frames[9] {
+            Frame::Spare(_, _) => !self.frames[10].is_playable(),
+            Frame::Pins(_, _) => true,
+            _ => false,
+        }
+    }
 }
 
 #[cfg(test)]
