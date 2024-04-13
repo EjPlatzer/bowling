@@ -10,5 +10,7 @@ fn main() {
     _ = game.bowl(5);
     _ = game.bowl(8);
     _ = game.bowl(1);
-    let _score = game.score();
+    let score = game.score();
+
+    println!("You scored {}!", score);
 }
